@@ -167,20 +167,42 @@ saveToLocalBtn.addEventListener('click', function(){
     }
 });
 
+let availableShowBtn = true;
+
 showFromLocalBtn.addEventListener('click', function(){
-    const itemsFromLocal = localStorage.getItem() //Finish
+    if (thisDiv.children.length >= 1){
+        availableShowBtn = false;
+    } else {
+        availableShowBtn = true;
+    }
+
+    if (!availableShowBtn){
+        alert("couldn't")
+        return;
+    };
+
+    if (availableShowBtn){
+        for (let i = 0; i < localStorage.length; i++){
+            if (shoppingCart.items.some(i => i.itemName.includes(localStorage.key(i)))){
+                const item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+
+                if (item && item.name && item.price){
+                    const div = document.createElement('div');
+                    div.textContent = `${item.name} - ${item.price}`
+                    div.classList.add('division')
+                    thisDiv.appendChild(div);
+                    console.log(item + "fetched from local storage.");
+                }
+            }
+        }
+    }
 });
 
 //functions:
 function searchForProduct(product){
     const theProduct = shoppingCart.items.find(item => item.itemName.toLowerCase().includes(product.toLowerCase()))
     const division = document.createElement("div");
-    division.style.width = "300px";
-    division.style.height = "40px";
-    division.style.display = "flex"
-    division.style.alignItems = 'center'
-    division.style.backgroundColor = "cyan";
-    division.style.borderRadius = "10px"
+    division.classList.add('    division')
     division.textContent = `${theProduct.itemName}: R$ ${theProduct.price}`;
     thisDiv.appendChild(division);
 }
