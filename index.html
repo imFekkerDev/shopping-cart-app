@@ -18,6 +18,7 @@
                 <div>
                     <input id="searchBar" type="text" width="300px" placeholder="Search for the product you'd like to buy">
                     <button id="searchBtn">Search</button>
+                    <button id="filterBtn">Filter: <label id="onOffFilter"></label></button>
                     <button id="saveToLocal">Save Item</button>
                     <button id="showFromLocal">Show from Local</button>
                 </div>
@@ -26,10 +27,16 @@
     </header>
     
     <main>
-        <button id="button">Click here</button>
-        <button id="button2">Click here too</button>
-        <button id="setLiBtn">Set Li Element</button>
-        <button id="removeChildDiv">remove child from Div</button>
+        <div id="filter-division">
+            <div id="filters-div">
+                <span><h3 id="filters-h3">Filters</h3></span>
+
+                <div id="filters">
+                    <label for="categoryCB">Category: </label><input id="categoryCB" type="checkbox">
+                    <br><br><label for="inStockCB">In Stock: </label><input id="inStockCB" type="checkbox">
+                </div>
+            </div>
+        </div>
         <button id="addItemBtn">Add Item to The Cart</button>
         <button id="showProdUl">Show Products in Ul</button>
         <div id="thisDiv">

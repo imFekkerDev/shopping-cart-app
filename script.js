@@ -1,6 +1,3 @@
-const button = document.getElementById("button");
-const setChildBtn = document.getElementById("button2");
-const setLiChild = document.getElementById("setLiBtn");
 const removeDivChildBtn = document.getElementById("removeChildDiv");
 const addItemBtn = document.getElementById("addItemBtn");
 const searchBtn = document.getElementById("searchBtn"); //searchBar
@@ -11,12 +8,21 @@ const showProdUlBtn = document.getElementById("showProdUl");
 const thisDiv = document.getElementById("thisDiv");
 const ul = document.getElementById("ul"); //const variables can't be redeclared
 const productsUl = document.getElementById("productsUl");
+
+//Filters:
+const filterBtn = document.getElementById("filterBtn"); //apply filter button
+const onOffFilter = document.getElementById("onOffFilter"); //On/Off Filters Label
+const filterDiv = document.getElementById("filter-division");
+const categoryCB = document.getElementById("categoryCB"); //Category Filter Checkbox
+const inStockCB = document.getElementById("inStockCB"); //In Stock Filter Checkbox
+//Other variables
 let count = 0; //let variables CAN be redeclared
 
 const shoppingCart = {
     items: [
         {itemName: "Laptop", category: "Electronics", price: 2500, stock: true},
-        {itemName: "Desktop", category: "Electronics", price: 3500, stock: true}
+        {itemName: "Desktop", category: "Electronics", price: 3500, stock: true},
+        {itemName: "Purse", category: "Style", price: 40, stock: true}
     ],
     addItem: function(itemName){
         const userResponse = window.prompt(`Would you like to add ${itemName} to the cart?`);
@@ -64,53 +70,9 @@ const shoppingCart = {
     }
 }
 
-//Object prototypal testing
-const secondCart = Object.create(shoppingCart);
-secondCart.buy = function(){
-    console.log();
-}
-
-//Check if a certain element exists:
-if (!button || !setChildBtn || !setLiChild || !ul){
-    console.error("This element doesn't exist");
-}
-
-button.addEventListener('click', function(){
-    console.log("Hello World");
-    this.textContent = "Hello World"
-    console.log(this);
-    
-    if (this.style.backgroundColor == 'red'){
-        this.style.backgroundColor = "cyan"
-    } else {
-        this.style.backgroundColor = "red"
-    }
-});
-
-setChildBtn.addEventListener('click', function(){
-    const paragraph = document.createElement("p");
-    paragraph.textContent = `Paragraph number ${count}`;
-    thisDiv.appendChild(paragraph);
-    count++;
-});
-
+//IMPORTANT
 showProdUlBtn.addEventListener('click', function(){
     shoppingCart.listAvailableProductsGUI();
-});
-
-removeDivChildBtn.addEventListener('click', function(){
-    if (thisDiv.lastChild){
-        thisDiv.lastChild.remove();
-        count--;
-    } else {
-        console.log("There are no paragraphs left");
-    }
-});
-
-setLiChild.addEventListener('click', function(){
-    const child = document.createElement("li");
-    child.textContent = "Excuse me?"
-    ul.appendChild(child);
 });
 
 searchBtn.addEventListener('click', function(){
@@ -128,7 +90,10 @@ searchBtn.addEventListener('click', function(){
         if (thisDiv.children) thisDiv.innerHTML = '';
         searchForProduct(text);
     }
+});
 
+filterBtn.addEventListener('click', function(){
+    
 });
 
 saveToLocalBtn.addEventListener('click', function(){
@@ -198,11 +163,32 @@ showFromLocalBtn.addEventListener('click', function(){
     }
 });
 
+let isFilterOn = false;
+filterBtn.addEventListener('click', function(){
+
+    if (!isFilterOn){
+        isFilterOn = true;
+        onOffFilter.textContent = "On"
+        filterBtn.style.backgroundColor = "green"
+        filterDiv.style.display = "block"
+        return;
+    } else {
+        isFilterOn = false;
+        onOffFilter.textContent = "Off"
+        filterBtn.style.backgroundColor = "red"
+        filterDiv.style.display = "none"
+        return;
+    }
+});
+
+categoryCB.addEventListener('change', applyFilters);
+inStockCB.addEventListener('change', applyFilters);
+
 //functions:
 function searchForProduct(product){
     const theProduct = shoppingCart.items.find(item => item.itemName.toLowerCase().includes(product.toLowerCase()))
     const division = document.createElement("div");
-    division.classList.add('    division')
+    division.classList.add('division')
     division.textContent = `${theProduct.itemName}: R$ ${theProduct.price}`;
     thisDiv.appendChild(division);
 }
@@ -210,4 +196,25 @@ function searchForProduct(product){
 function savetoLocalStorage(){
     localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart.items));
     alert("Saved!");
+}
+
+function applyFilters(){
+    thisDiv.innerHTML = "";
+
+    let allProducts = shoppingCart.items;
+
+    if (categoryCB.checked){
+        allProducts = allProducts.filter(i => i.category == "Electronics");
+    }
+
+    if (inStockCB.checked){
+        allProducts = allProducts.filter(i => i.stock == true);
+    }
+
+    allProducts.forEach(i => {
+        const div = document.createElement("div");
+        div.textContent = `${i.itemName} (${i.category}) - ${i.stock ? "Available" : "Unavailable"}`;
+        div.classList.add("division");
+        thisDiv.appendChild(div);
+    })
 }
