@@ -18,7 +18,7 @@
                 <div>
                     <input id="searchBar" type="text" width="300px" placeholder="Search for the product you'd like to buy">
                     <button id="searchBtn">Search</button>
-                    <button id="filterBtn">Filter: <label id="onOffFilter"></label></button>
+                    <button id="filterBtn">Filter: <label id="onOffFilter">Off</label></button>
                     <button id="saveToLocal">Save Item</button>
                     <button id="showFromLocal">Show from Local</button>
                 </div>
@@ -32,7 +32,13 @@
                 <span><h3 id="filters-h3">Filters</h3></span>
 
                 <div id="filters">
-                    <label for="categoryCB">Category: </label><input id="categoryCB" type="checkbox">
+                    <div id="categoryDiv">
+                        <label for="categoryCB">Category: </label><input id="categoryCB" type="checkbox">
+                        <div id="categories">
+                            <label for="elecCB">Electronics: </label><input type="checkbox" id="elecCB">
+                            <br><label for="styleCB">Style: </label><input type="checkbox" id="styleCB">
+                        </div>
+                    </div>
                     <br><br><label for="inStockCB">In Stock: </label><input id="inStockCB" type="checkbox">
                 </div>
             </div>

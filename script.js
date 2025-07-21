@@ -14,7 +14,10 @@ const filterBtn = document.getElementById("filterBtn"); //apply filter button
 const onOffFilter = document.getElementById("onOffFilter"); //On/Off Filters Label
 const filterDiv = document.getElementById("filter-division");
 const categoryCB = document.getElementById("categoryCB"); //Category Filter Checkbox
+const categories = document.getElementById('categories'); //rest of categories checkbox
 const inStockCB = document.getElementById("inStockCB"); //In Stock Filter Checkbox
+const elecCB = document.getElementById('elecCB'); //Electronics Checkbox Filter
+const styleCB = document.getElementById('styleCB'); //Style Checkbox Filter
 //Other variables
 let count = 0; //let variables CAN be redeclared
 
@@ -92,10 +95,6 @@ searchBtn.addEventListener('click', function(){
     }
 });
 
-filterBtn.addEventListener('click', function(){
-    
-});
-
 saveToLocalBtn.addEventListener('click', function(){
     if (!thisDiv.children) alert("There are no items to be saved!");
     const response = window.prompt("Would you like to save these items to the local storage?");
@@ -171,18 +170,32 @@ filterBtn.addEventListener('click', function(){
         onOffFilter.textContent = "On"
         filterBtn.style.backgroundColor = "green"
         filterDiv.style.display = "block"
-        return;
     } else {
         isFilterOn = false;
         onOffFilter.textContent = "Off"
         filterBtn.style.backgroundColor = "red"
         filterDiv.style.display = "none"
-        return;
+        setCheckboxesNotChecked()
+        thisDiv.innerHTML = ""
     }
 });
 
 categoryCB.addEventListener('change', applyFilters);
 inStockCB.addEventListener('change', applyFilters);
+elecCB.addEventListener('change', applyFilters);
+styleCB.addEventListener('change', applyFilters);
+
+document.querySelectorAll("#filters input[type='checkbox']").forEach(cb => {
+    cb.addEventListener('change', () => {
+        const someChecked = Array.from(document.querySelectorAll("#filters input[type='checkbox']")).some(checkb => checkb.checked);
+
+        if (!someChecked){
+            thisDiv.innerHTML = "";
+        } else {
+            applyFilters();
+        }
+    })
+})
 
 //functions:
 function searchForProduct(product){
@@ -198,20 +211,35 @@ function savetoLocalStorage(){
     alert("Saved!");
 }
 
+function setCheckboxesNotChecked(){
+    Array.from(document.querySelectorAll("#filters input[type='checkbox']")).forEach(cb => cb.checked = false)
+}
+
 function applyFilters(){
     thisDiv.innerHTML = "";
 
-    let allProducts = shoppingCart.items;
+    let filteredProducts = shoppingCart.items;
 
     if (categoryCB.checked){
-        allProducts = allProducts.filter(i => i.category == "Electronics");
+        categories.style.display = "block";
+
+        let checkedCategories = [];
+        if (elecCB.checked) checkedCategories.push('electronics');
+        if (styleCB.checked) checkedCategories.push('style');
+
+        if (checkedCategories.length > 0){
+            filteredProducts = filteredProducts.filter(i => checkedCategories.includes(i.category.toLowerCase()));
+        }
+
+    } else {
+        categories.style.display = "none";
     }
 
     if (inStockCB.checked){
-        allProducts = allProducts.filter(i => i.stock == true);
+        filteredProducts = filteredProducts.filter(i => i.stock == true);
     }
 
-    allProducts.forEach(i => {
+    filteredProducts.forEach(i => {
         const div = document.createElement("div");
         div.textContent = `${i.itemName} (${i.category}) - ${i.stock ? "Available" : "Unavailable"}`;
         div.classList.add("division");
