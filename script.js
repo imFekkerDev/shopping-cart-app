@@ -1,3 +1,4 @@
+//ordinary variables
 const removeDivChildBtn = document.getElementById("removeChildDiv");
 const addItemBtn = document.getElementById("addItemBtn");
 const searchBtn = document.getElementById("searchBtn"); //searchBar
@@ -8,6 +9,9 @@ const showProdUlBtn = document.getElementById("showProdUl");
 const thisDiv = document.getElementById("thisDiv");
 const ul = document.getElementById("ul"); //const variables can't be redeclared
 const productsUl = document.getElementById("productsUl");
+
+//search variables:
+const searchResults = document.getElementById('searchResults');
 
 //Filters:
 const filterBtn = document.getElementById("filterBtn"); //apply filter button
@@ -76,6 +80,22 @@ const shoppingCart = {
 //IMPORTANT
 showProdUlBtn.addEventListener('click', function(){
     shoppingCart.listAvailableProductsGUI();
+});
+
+searchBar.addEventListener('input', () => {
+    
+    const query = searchBar.value.toLowerCase();
+    searchResults.innerHTML = '';
+    if (query.length === 0) return;
+
+    const products = shoppingCart.items.filter(i => i.itemName.toLowerCase().includes(query))
+
+    products.forEach(i => {
+        const suggestion = document.createElement('div')
+        suggestion.classList.add('searchChild')
+        suggestion.textContent = `${i.itemName} (${i.category}) - R$${i.price}`
+        searchResults.appendChild(suggestion);
+    })
 });
 
 searchBtn.addEventListener('click', function(){
