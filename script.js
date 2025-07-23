@@ -4,11 +4,14 @@ const addItemBtn = document.getElementById("addItemBtn");
 const searchBtn = document.getElementById("searchBtn"); //searchBar
 const saveToLocalBtn = document.getElementById("saveToLocal"); //save to local storage
 const showFromLocalBtn = document.getElementById("showFromLocal");
+const checkHistoryBtn = document.getElementById('checkHistoryBtn'); //Check the History
+const closeModalBtn = document.getElementById('closeModalBtn'); //Close Modal Button
 const searchBar = document.getElementById("searchBar"); //search bar button
 const showProdUlBtn = document.getElementById("showProdUl");
 const thisDiv = document.getElementById("thisDiv");
 const ul = document.getElementById("ul"); //const variables can't be redeclared
 const productsUl = document.getElementById("productsUl");
+const modalContent = document.getElementById('modal-content');
 
 //search variables:
 const searchResults = document.getElementById('searchResults');
@@ -24,12 +27,14 @@ const elecCB = document.getElementById('elecCB'); //Electronics Checkbox Filter
 const styleCB = document.getElementById('styleCB'); //Style Checkbox Filter
 //Other variables
 let count = 0; //let variables CAN be redeclared
+let actions = [] //Actions in the History | TO BE FINISHED
 
 const shoppingCart = {
     items: [
         {itemName: "Laptop", category: "Electronics", price: 2500, stock: true},
         {itemName: "Desktop", category: "Electronics", price: 3500, stock: true},
-        {itemName: "Purse", category: "Style", price: 40, stock: true}
+        {itemName: "Purse", category: "Style", price: 40, stock: true},
+        {itemName: "Desk", category: "Personal Space", price: 200, stock:true}
     ],
     addItem: function(itemName){
         const userResponse = window.prompt(`Would you like to add ${itemName} to the cart?`);
@@ -82,9 +87,13 @@ showProdUlBtn.addEventListener('click', function(){
     shoppingCart.listAvailableProductsGUI();
 });
 
+//Price formater (Intl)
+const formaterBRA = new Intl.NumberFormat('pt-BR', {style: "currency", currency: "BRL"});
+const formaterUSA = new Intl.NumberFormat('en-US', {style: "currency", currency: "USD"})
+
 searchBar.addEventListener('input', () => {
     
-    const query = searchBar.value.toLowerCase();
+    const query = searchBar.value.toLowerCase().trim();
     searchResults.innerHTML = '';
     if (query.length === 0) return;
 
@@ -92,10 +101,17 @@ searchBar.addEventListener('input', () => {
 
     products.forEach(i => {
         const suggestion = document.createElement('div')
-        suggestion.classList.add('searchChild')
-        suggestion.textContent = `${i.itemName} (${i.category}) - R$${i.price}`
+        suggestion.classList.add('searchChild');
+        suggestion.textContent = `${i.itemName} (${i.category}) - ${formaterBRA.format(i.price)}`
         searchResults.appendChild(suggestion);
     })
+
+    if (products.length === 0){
+        const advice = document.createElement('div');
+        advice.classList.add('searchChild');
+        advice.textContent = 'Nenhum item encontrado.'
+        searchResults.appendChild(advice);
+    }
 });
 
 searchBtn.addEventListener('click', function(){
@@ -144,6 +160,7 @@ saveToLocalBtn.addEventListener('click', function(){
 
                 localStorage.setItem(savedItem.name, JSON.stringify(savedItem)); //To finish
                 alert("Item salvo no local storage!");
+                actions.push(`Saved ${savedItem.name} to localStorage.`);
                 console.log("Item salvo no local storage!");
             } else alert("Item não encontrado no Banco de Dados e, portanto, não salvo");
         })
@@ -176,10 +193,16 @@ showFromLocalBtn.addEventListener('click', function(){
                     div.classList.add('division')
                     thisDiv.appendChild(div);
                     console.log(item + "fetched from local storage.");
+                    actions.push(`${item} fetched from local storage.`);
                 }
             }
         }
     }
+});
+
+checkHistoryBtn.addEventListener('click', function(){
+    modalContent.style.display = 'block'
+    setHistory();
 });
 
 let isFilterOn = false;
@@ -198,6 +221,10 @@ filterBtn.addEventListener('click', function(){
         setCheckboxesNotChecked()
         thisDiv.innerHTML = ""
     }
+});
+
+closeModalBtn.addEventListener('click', function(){
+    modalContent.style.display = 'none';
 });
 
 categoryCB.addEventListener('change', applyFilters);
@@ -235,6 +262,16 @@ function setCheckboxesNotChecked(){
     Array.from(document.querySelectorAll("#filters input[type='checkbox']")).forEach(cb => cb.checked = false)
 }
 
+//HISTORY LOGIC - TERMINAR A LÓGICA DE AMOSTRA DAS AÇÕES DO USUÁRIO NO HISTÓRICO
+/*
+const divChildren = Array.from(modalContent.children);
+console.log(divChildren)
+function setHistory(){
+    const allChildren = Array.from(modalContent.children);
+    const indexIg = (allChildren);
+}
+//TERMINAR ACIMA
+*/
 function applyFilters(){
     thisDiv.innerHTML = "";
 
