@@ -29,6 +29,10 @@ const styleCB = document.getElementById('styleCB'); //Style Checkbox Filter
 let count = 0; //let variables CAN be redeclared
 let actions = [] //Actions in the History | TO BE FINISHED
 
+//Undo/Redo Actions Logic
+let undoStack = []; //Done actions that can be undone;
+let redoStack = []; //Undone actions that can be redone;
+
 const shoppingCart = {
     items: [
         {itemName: "Laptop", category: "Electronics", price: 2500, stock: true},
@@ -51,6 +55,11 @@ const shoppingCart = {
             console.log("If an item is not in stock, you can't add it to the cart");
         } else if (userResponse.toLowerCase().startsWith("y")){
             this.items.push({itemName, category, price: Number(userPrice), stock: true})
+            undoStack.push(`${itemName} added to the Cart!`);
+            setTimeout(() => {
+                confirm(`${itemName} added to the Cart!`);
+            }, 5000);
+            
         }
     },
     removeItem(itemName){
@@ -262,16 +271,42 @@ function setCheckboxesNotChecked(){
     Array.from(document.querySelectorAll("#filters input[type='checkbox']")).forEach(cb => cb.checked = false)
 }
 
-//HISTORY LOGIC - TERMINAR A LÓGICA DE AMOSTRA DAS AÇÕES DO USUÁRIO NO HISTÓRICO
+//HISTORY LOGIC - TERMINAR A LÓGICA DE AMOSTRA DAS AÇÕES DO USUÁRIO NO HISTÓRICO ----------------------------------------
 /*
 const divChildren = Array.from(modalContent.children);
-console.log(divChildren)
-function setHistory(){
-    const allChildren = Array.from(modalContent.children);
-    const indexIg = (allChildren);
-}
+const ignoreThese = Array.from(modalContent.children).filter(child => child.classList.contains('ignore'))
+console.log(divChildren);
+
+function setHistory() {
+    const toBeDoneActs = [];
+
+    // Pega os filhos atuais da modalContent que você quer ignorar
+    const ignoredElements = Array.from(modalContent.children).filter(child =>
+        child.classList.contains('ignore')
+    );
+
+    // Filtra ações que ainda não estão no histórico e não são ignoradas
+    actions.forEach(action => {
+        const alreadyInHistory = Array.from(modalContent.children).some(child => 
+            child.textContent === action
+        );
+
+        if (!alreadyInHistory) {
+            toBeDoneActs.push(action);
+        }
+    });
+
+    // Adiciona novas ações ao modalContent
+    toBeDoneActs.forEach(action => {
+        const element = document.createElement('div');
+        element.textContent = action;
+        element.classList.add('division');
+        modalContent.appendChild(element);
+    });
+} */ //---------------------------------------------------------------------------------------------------
+
 //TERMINAR ACIMA
-*/
+
 function applyFilters(){
     thisDiv.innerHTML = "";
 
