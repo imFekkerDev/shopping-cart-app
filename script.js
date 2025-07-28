@@ -8,6 +8,7 @@ const checkHistoryBtn = document.getElementById('checkHistoryBtn'); //Check the 
 const closeModalBtn = document.getElementById('closeModalBtn'); //Close Modal Button
 const searchBar = document.getElementById("searchBar"); //search bar button
 const showProdUlBtn = document.getElementById("showProdUl");
+const removeFromLocalBtn = document.getElementById("removeFromLocal");
 const thisDiv = document.getElementById("thisDiv");
 const ul = document.getElementById("ul"); //const variables can't be redeclared
 const productsUl = document.getElementById("productsUl");
@@ -171,10 +172,30 @@ saveToLocalBtn.addEventListener('click', function(){
                 alert("Item salvo no local storage!");
                 actions.push(`Saved ${savedItem.name} to localStorage.`);
                 console.log("Item salvo no local storage!");
+                const action = `${savedItem.name} saved in localStorage`
+                doAction(action)
             } else alert("Item não encontrado no Banco de Dados e, portanto, não salvo");
         })
 
     }
+});
+
+removeFromLocalBtn.addEventListener('click', function(){
+    const item = window.prompt("What item would you like to remove from the local storage?")
+    .trim()
+    .toLowerCase();
+
+    for (let i = 0; i < localStorage.length; i++){
+        const key = localStorage.key(i);
+
+        if (key.toLowerCase() == item){
+            localStorage.removeItem(key)
+            alert(`item '${key}' successfully removed from the Local Storage.`);
+            return;
+        }
+    }
+
+    alert("This item doesn't exist in the local storage!");
 });
 
 let availableShowBtn = true;
@@ -262,8 +283,8 @@ function searchForProduct(product){
     thisDiv.appendChild(division);
 }
 
-function savetoLocalStorage(){
-    localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart.items));
+function savetoLocalStorage(keyName, obj){
+    localStorage.setItem(keyName, JSON.stringify(obj));
     alert("Saved!");
 }
 
@@ -337,4 +358,30 @@ function applyFilters(){
         div.classList.add("division");
         thisDiv.appendChild(div);
     })
+}
+
+function doAction(action){
+    undoStack.push(action);
+    console.log(action);
+
+    const response = confirm(action + "Undo or Proceed?");
+
+    if (response){
+        return;
+    } else {
+        undoAction(action);
+    }
+}
+
+function undoAction(action){
+    undoStack.pop(action)
+    redoStack.push(action);
+    
+    const response = confirm(action + " undone! Redo?");
+
+    if (response){
+        doAction(action);
+    } else {
+        return;
+    }
 }
