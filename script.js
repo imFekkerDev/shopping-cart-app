@@ -1,4 +1,4 @@
-//ordinary variables
+//UI Variables
 const removeDivChildBtn = document.getElementById("removeChildDiv");
 const addItemBtn = document.getElementById("addItemBtn");
 const searchBtn = document.getElementById("searchBtn"); //searchBar
@@ -9,13 +9,15 @@ const closeModalBtn = document.getElementById('closeModalBtn'); //Close Modal Bu
 const searchBar = document.getElementById("searchBar"); //search bar button
 const showProdUlBtn = document.getElementById("showProdUl");
 const removeFromLocalBtn = document.getElementById("removeFromLocal");
+const checkDoneActionsBtn = document.getElementById("checkDoneActions");
+const undoBtn = document.getElementById("undoBtn"); //undo action button
 const thisDiv = document.getElementById("thisDiv");
 const ul = document.getElementById("ul"); //const variables can't be redeclared
 const productsUl = document.getElementById("productsUl");
 const modalContent = document.getElementById('modal-content');
-
-//search variables:
 const searchResults = document.getElementById('searchResults');
+const doneActionsSidebar = document.getElementById("done-actions-sidebar");
+const doneActionsContent = document.getElementById("done-actions-content");
 
 //Filters:
 const filterBtn = document.getElementById("filterBtn"); //apply filter button
@@ -99,7 +101,7 @@ showProdUlBtn.addEventListener('click', function(){
 
 //Price formater (Intl)
 const formaterBRA = new Intl.NumberFormat('pt-BR', {style: "currency", currency: "BRL"});
-const formaterUSA = new Intl.NumberFormat('en-US', {style: "currency", currency: "USD"})
+const formaterUSA = new Intl.NumberFormat('en-US', {style: "currency", currency: "USD"});
 
 searchBar.addEventListener('input', () => {
     
@@ -227,6 +229,39 @@ showFromLocalBtn.addEventListener('click', function(){
                 }
             }
         }
+    }
+});
+
+let isDoneActionsBarShowed = false;
+checkDoneActionsBtn.addEventListener('click', function(){
+    
+    if (!isDoneActionsBarShowed){
+
+        isDoneActionsBarShowed = true;
+        doneActionsSidebar.style.display = "flex";
+
+        if (actions.length > 0){
+            actions.forEach(act => {
+                const division = document.createElement('div');
+                const undoBtn = document.createElement('button');
+
+                undoBtn.textContent = "Undo";
+                undoBtn.setAttribute('id', 'undoBtn');
+
+                undoBtn.addEventListener('click', function(){
+                    doneActionsContent.removeChild(division);
+                });
+
+                division.classList.add('division');
+
+                division.textContent = act;
+                division.appendChild(undoBtn);
+                doneActionsContent.appendChild(division);
+            });
+        }
+    } else {
+        isDoneActionsBarShowed = false;
+        doneActionsSidebar.style.display = "none";
     }
 });
 
@@ -360,6 +395,7 @@ function applyFilters(){
     })
 }
 
+//TO FINISH;
 function doAction(action){
     undoStack.push(action);
     console.log(action);

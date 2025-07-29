@@ -138,3 +138,29 @@ button:hover{
     border-radius: 10px;
     display: none;
 }
+
+#done-actions-sidebar{
+    display: none;
+    flex-direction: column;
+    width: 250px;
+    height: 100vh;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid black;
+}
+
+#done-actions-header{
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    padding: 10px;
+    text-align: center;
+    justify-content: center;
+}
+
+#done-actions-content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
