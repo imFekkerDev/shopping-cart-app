@@ -313,7 +313,7 @@ document.querySelectorAll("#filters input[type='checkbox']").forEach(cb => {
 function searchForProduct(product){
     const theProduct = shoppingCart.items.find(item => item.itemName.toLowerCase().includes(product.toLowerCase()))
     const division = document.createElement("div");
-    division.classList.add('division')
+    division.classList.add('division');
     division.textContent = `${theProduct.itemName}: R$ ${theProduct.price}`;
     thisDiv.appendChild(division);
 }
@@ -395,17 +395,19 @@ function applyFilters(){
     })
 }
 
-//TO FINISH;
-function doAction(action){
-    undoStack.push(action);
-    console.log(action);
+function doAct(action, actionType){ // do/undo function is ready
 
-    const response = confirm(action + "Undo or Proceed?");
+    switch(actionType){
+        case 'ADD_TO_LOCALSTG':
+            const funcParams = action.toString().match(/localStorage\.setItem\s*\(([^)]+)\)/);
 
-    if (response){
-        return;
-    } else {
-        undoAction(action);
+            if (funcParams && funcParams[1]){
+                const matches = funcParams[1].split(',').map(p => p.trim());
+                console.log(matches);
+            } else {
+                console.log("nothing here.");
+            }
+            break;
     }
 }
 
@@ -421,3 +423,5 @@ function undoAction(action){
         return;
     }
 }
+
+doAct(() => localStorage.setItem('keyName', Object), 'ADD_TO_LOCALSTG'); // that's how you call it
