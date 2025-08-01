@@ -160,7 +160,7 @@ saveToLocalBtn.addEventListener('click', function(){
                 const name = matchedItem.itemName;
                 const price = matchedItem.price;
 
-                savedItem = {
+                const savedItem = {
                     name: name,
                     price: price
                 }
@@ -170,12 +170,7 @@ saveToLocalBtn.addEventListener('click', function(){
                     return;
                 }
 
-                localStorage.setItem(savedItem.name, JSON.stringify(savedItem)); //To finish
-                alert("Item salvo no local storage!");
-                actions.push(`Saved ${savedItem.name} to localStorage.`);
-                console.log("Item salvo no local storage!");
-                const action = `${savedItem.name} saved in localStorage`
-                doAction(action)
+                doAct(savedItem.name, savedItem, 'ADD_TO_LOCALSTG');
             } else alert("Item não encontrado no Banco de Dados e, portanto, não salvo");
         })
 
@@ -320,7 +315,14 @@ function searchForProduct(product){
 
 function savetoLocalStorage(keyName, obj){
     localStorage.setItem(keyName, JSON.stringify(obj));
-    alert("Saved!");
+}
+
+function removeFromLocalStorage(keyName){
+    for (let i = 0; i < localStorage.length; i++){
+        if (localStorage.key(i).toLowerCase().includes(keyName.toLowerCase())){
+            localStorage.removeItem(keyName)
+        }
+    }
 }
 
 function setCheckboxesNotChecked(){
@@ -395,19 +397,19 @@ function applyFilters(){
     })
 }
 
-function doAct(action, actionType){ // do/undo function is ready
+function doAct(keyName, obj, actionType){
 
     switch(actionType){
         case 'ADD_TO_LOCALSTG':
-            const funcParams = action.toString().match(/localStorage\.setItem\s*\(([^)]+)\)/);
+                savetoLocalStorage(keyName, obj);
+                const confirmation = confirm(keyName + " has been successfully saved to local storage. Click 'CANCEL' to undo.")
 
-            if (funcParams && funcParams[1]){
-                const matches = funcParams[1].split(',').map(p => p.trim());
-                console.log(matches);
-            } else {
-                console.log("nothing here.");
-            }
-            break;
+                if (!confirmation){
+                    removeFromLocalStorage(keyName)
+                    alert(`The item ${keyName} hasn't been saved to local storage!`);
+                };
+                
+         break;
     }
 }
 
@@ -423,5 +425,3 @@ function undoAction(action){
         return;
     }
 }
-
-doAct(() => localStorage.setItem('keyName', Object), 'ADD_TO_LOCALSTG'); // that's how you call it
