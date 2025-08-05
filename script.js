@@ -143,6 +143,7 @@ searchBtn.addEventListener('click', function(){
     }
 });
 
+const values = [];
 saveToLocalBtn.addEventListener('click', function(){
     if (!thisDiv.children) alert("There are no items to be saved!");
     const response = window.prompt("Would you like to save these items to the local storage?");
@@ -169,8 +170,10 @@ saveToLocalBtn.addEventListener('click', function(){
                     alert("This item is already stored in local storage!!");
                     return;
                 }
+                values.push(savedItem.name)
+                values.push(savedItem);
 
-                doAct(savedItem.name, savedItem, 'ADD_TO_LOCALSTG');
+                doAct(values, 'ADD_TO_LOCALSTG');
             } else alert("Item não encontrado no Banco de Dados e, portanto, não salvo");
         })
 
@@ -397,18 +400,19 @@ function applyFilters(){
     })
 }
 
-function doAct(keyName, obj, actionType){
+function doAct(valuesArr, actionType){
 
     switch(actionType){
         case 'ADD_TO_LOCALSTG':
-                savetoLocalStorage(keyName, obj);
-                const confirmation = confirm(keyName + " has been successfully saved to local storage. Click 'CANCEL' to undo.")
+                savetoLocalStorage(valuesArr[0], valuesArr[1]);
+                const confirmation = confirm(valuesArr[0] + " has been successfully saved to local storage. Click 'CANCEL' to undo.")
 
                 if (!confirmation){
-                    removeFromLocalStorage(keyName)
-                    alert(`The item ${keyName} hasn't been saved to local storage!`);
+                    removeFromLocalStorage(valuesArr[0])
+                    alert(`The item ${valuesArr[0]} hasn't been saved to local storage!`);
                 };
                 
+                values.length = 0;
          break;
     }
 }
